@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resources/image/connected.png</file>
+        <file>resources/image/disconnected.png</file>
+        <file>resources/image/network.png</file>
+        <file>resources/image/open.png</file>
+        <file>resources/image/open.psd</file>
+        <file>resources/image/opened.png</file>
+        <file>resources/image/send.png</file>
+        <file>resources/image/add.png</file>
+        <file>resources/image/tick.png</file>
+        <file>resources/image/delete.png</file>
+        <file>resources/image/config.png</file>
+        <file>resources/image/cancel.png</file>
+        <file>resources/image/ok.png</file>
+    </qresource>
+</RCC>
