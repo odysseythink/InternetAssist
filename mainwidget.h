@@ -176,6 +176,7 @@ private slots:
     void _ClearSendZone();
     void _OnRecvShowTimeChbChecked(bool value);
     void _OnRecvToFileChbChecked(bool value);
+    void _OnSendAsHexChbChecked(bool value);
     void _SaveReceivedDataToFile();
     void _OnSendAutoSurfixChbChecked(bool value);
 };

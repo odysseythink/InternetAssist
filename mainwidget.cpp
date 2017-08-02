@@ -500,6 +500,7 @@ void CMainWidget::_CreateUiSendSet()
     m_pSendAsHexChb->setFixedHeight(20);
     m_pSendAsHexChb->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     pSendSetLayout->addWidget(m_pSendAsHexChb);
+    connect(m_pSendAsHexChb, SIGNAL(clicked(bool)), this, SLOT(_OnSendAsHexChbChecked(bool)));
     m_pSendIntervalChb = new QCheckBox("发送周期", this);
     m_pSendIntervalChb->setFixedHeight(20);
     m_pSendIntervalChb->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -1332,6 +1333,37 @@ void CMainWidget::_OnRecvToFileChbChecked(bool value)
     }
 }
 
+int NormalStringToHexString(QString src, QString dest)
+{
+
+}
+
+int HexStringToNormalString(QString src, QString dest)
+{
+
+}
+
+void CMainWidget::_OnSendAsHexChbChecked(bool value)
+{
+    if(value)
+    {
+        QByteArray sendText = m_pSendDataTEdit->document()->toPlainText().toLocal8Bit();
+        qDebug("string len is %d", sendText.length());
+        m_pSendDataTEdit->clear();
+        QString s;
+        QString hexText;
+        for(int iLoop = 0; iLoop < sendText.length(); iLoop++)
+        {
+            hexText += s.sprintf("%02x", sendText.at(iLoop));
+        }
+        m_pSendDataTEdit->appendPlainText(hexText);
+    }
+    else
+    {
+
+    }
+}
+
 void CMainWidget::_SaveReceivedDataToFile()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("select a file to save already received data"), ".", tr("data Files(*.txt *.log)"));
@@ -1366,15 +1398,14 @@ void CMainWidget::_SaveReceivedDataToFile()
 
 void CMainWidget::_OnSendAutoSurfixChbChecked(bool value)
 {
-    qDebug("%s:%d", __FUNCTION__, __LINE__);
     if(value)
     {
-        qDebug("%s:%d", __FUNCTION__, __LINE__);
         CSurfixConfigDlg* pSurfixSet = new CSurfixConfigDlg;
         if(pSurfixSet->exec() == QDialog::Accepted)
         {
-
+            qDebug("surfix type is %d, custom byte is 0x%02x", CSurfixConfigDlg::m_SuffixType, CSurfixConfigDlg::m_cCustomSuffix);
         }
+        delete pSurfixSet;
     }
     else
     {

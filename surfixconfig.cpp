@@ -34,6 +34,9 @@
 /* External functions --------------------------------------------------------*/
 /* External variables --------------------------------------------------------*/
 
+EN_Suffix_Type CSurfixConfigDlg::m_SuffixType = EN_Suffix_Custom;
+uint8_t CSurfixConfigDlg::m_cCustomSuffix = 0x0D;
+
 CSurfixConfigDlg::CSurfixConfigDlg(QWidget *parent)
 {
     QRegExp regExpHex("([0-9]|[A-E]|[a-e]){2}");
@@ -51,7 +54,7 @@ CSurfixConfigDlg::CSurfixConfigDlg(QWidget *parent)
     QLabel* pMsgLbl3 = new QLabel("(附加位字节的值为其他所有字节的异或)");
     m_pCustomRBtn =  new QRadioButton("固定位");
     QLabel* pMsgLbl4 = new QLabel("(附加位字节的值为固定的16进制数：");
-    m_pCustomSurfixLEdit = new QLineEdit("0D");
+    m_pCustomSurfixLEdit = new QLineEdit;
     m_pCustomSurfixLEdit->setValidator(new QRegExpValidator(regExpHex, this));
     m_pCustomSurfixLEdit->setFixedWidth(20);
     QLabel* pMsgLbl5 = new QLabel("H)");
@@ -59,12 +62,29 @@ CSurfixConfigDlg::CSurfixConfigDlg(QWidget *parent)
     pLayout->addWidget(pMsgLbl4);
     pLayout->addWidget(m_pCustomSurfixLEdit);
     pLayout->addWidget(pMsgLbl5);
-    m_pCustomRBtn->setChecked(true);
     connect(m_pNegativeRBtn, SIGNAL(clicked(bool)), this, SLOT(_OnRadioButtonClicked(bool)));
     connect(m_pPositiveRBtn, SIGNAL(clicked(bool)), this, SLOT(_OnRadioButtonClicked(bool)));
     connect(m_pXorRBtn, SIGNAL(clicked(bool)), this, SLOT(_OnRadioButtonClicked(bool)));
     connect(m_pCustomRBtn, SIGNAL(clicked(bool)), this, SLOT(_OnRadioButtonClicked(bool)));
-
+    if(EN_Suffix_Negative == CSurfixConfigDlg::m_SuffixType)
+    {
+        m_pNegativeRBtn->setChecked(true);
+    }
+    else if(EN_Suffix_Positive == CSurfixConfigDlg::m_SuffixType)
+    {
+        m_pPositiveRBtn->setChecked(true);
+    }
+    else if(EN_Suffix_Xor == CSurfixConfigDlg::m_SuffixType)
+    {
+        m_pXorRBtn->setChecked(true);
+    }
+    else if(EN_Suffix_Custom == CSurfixConfigDlg::m_SuffixType)
+    {
+        m_pCustomRBtn->setChecked(true);
+    }
+    QString s;
+    s.sprintf("%02x", m_cCustomSuffix);
+    m_pCustomSurfixLEdit->setText(s);
 
     pGrpLayout->addWidget(m_pNegativeRBtn, 0, 0, 1, 1);
     pGrpLayout->addWidget(pMsgLbl1, 0, 1, 1, 1);
@@ -139,11 +159,46 @@ CSurfixConfigDlg::~CSurfixConfigDlg()
     }
 }
 
+uint8_t AssiiToHex(char c)
+{
+    uint8_t res = 0;
+
+    if((c >= '0') && (c <= '9'))
+    {
+        res = c - '0';
+    }
+
+    if((c >= 'A') && (c <= 'E'))
+    {
+        res = c - 'A' + 10;
+    }
+
+    if((c >= 'a') && (c <= 'e'))
+    {
+        res = c - 'a' + 10;
+    }
+
+    return res;
+}
+
 void CSurfixConfigDlg::_OnOkBtnClicked()
 {
-    if(m_SuffixType == EN_Suffix_Custom)
+    if(CSurfixConfigDlg::m_SuffixType == EN_Suffix_Custom)
     {
-
+        char* pData = m_pCustomSurfixLEdit->text().toLocal8Bit().data();
+        uint32_t len = m_pCustomSurfixLEdit->text().toLocal8Bit().length();
+        if(0 == len)
+        {
+            CSurfixConfigDlg::m_cCustomSuffix = 0x00;
+        }
+        else if(1 == len)
+        {
+            CSurfixConfigDlg::m_cCustomSuffix = AssiiToHex(pData[0]);
+        }
+        else
+        {
+            CSurfixConfigDlg::m_cCustomSuffix = AssiiToHex(pData[1]) | (AssiiToHex(pData[0]) << 4);
+        }
     }
     QDialog::accept();
 }
@@ -160,19 +215,19 @@ void CSurfixConfigDlg::_OnRadioButtonClicked(bool value)
 
     if(pBtn == m_pNegativeRBtn)
     {
-        m_SuffixType = EN_Suffix_Negative;
+        CSurfixConfigDlg::m_SuffixType = EN_Suffix_Negative;
     }
     else if(pBtn == m_pPositiveRBtn)
     {
-        m_SuffixType = EN_Suffix_Positive;
+        CSurfixConfigDlg::m_SuffixType = EN_Suffix_Positive;
     }
     else if(pBtn == m_pXorRBtn)
     {
-        m_SuffixType = EN_Suffix_Xor;
+        CSurfixConfigDlg::m_SuffixType = EN_Suffix_Xor;
     }
     else if(pBtn == m_pCustomRBtn)
     {
-        m_SuffixType = EN_Suffix_Custom;
+        CSurfixConfigDlg::m_SuffixType = EN_Suffix_Custom;
     }
 }
 

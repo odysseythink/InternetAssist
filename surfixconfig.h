@@ -72,8 +72,8 @@ public:
     ~CSurfixConfigDlg();
 
 public:
-    EN_Suffix_Type m_SuffixType;
-    uint8_t m_cCustomSuffix = 0x00;
+    static EN_Suffix_Type m_SuffixType;
+    static uint8_t m_cCustomSuffix;
 
 private:
     QRadioButton* m_pNegativeRBtn = NULL;
