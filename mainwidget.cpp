@@ -1333,14 +1333,18 @@ void CMainWidget::_OnRecvToFileChbChecked(bool value)
     }
 }
 
-int NormalStringToHexString(QString src, QString dest)
+extern uint8_t AssiiToHex(uint8_t c);
+int HexStringToNormalString(QString* src, QString* dest)
 {
-
-}
-
-int HexStringToNormalString(QString src, QString dest)
-{
-
+    uint8_t perByte;
+    QString perByteString;
+    int len = src->toLocal8Bit().length() - src->toLocal8Bit().length() % 2;
+    for(int iLoop = 0; iLoop < len; iLoop += 2)
+    {
+        perByte = AssiiToHex(src->toLocal8Bit().at(iLoop)) << 4 | AssiiToHex(src->toLocal8Bit().at(iLoop + 1));
+        *dest += perByteString.sprintf("%c", perByte);
+    }
+    return 0;
 }
 
 void CMainWidget::_OnSendAsHexChbChecked(bool value)
@@ -1348,7 +1352,6 @@ void CMainWidget::_OnSendAsHexChbChecked(bool value)
     if(value)
     {
         QByteArray sendText = m_pSendDataTEdit->document()->toPlainText().toLocal8Bit();
-        qDebug("string len is %d", sendText.length());
         m_pSendDataTEdit->clear();
         QString s;
         QString hexText;
@@ -1360,7 +1363,11 @@ void CMainWidget::_OnSendAsHexChbChecked(bool value)
     }
     else
     {
-
+        QString sendText = m_pSendDataTEdit->document()->toPlainText();
+        m_pSendDataTEdit->clear();
+        QString normalText;
+        HexStringToNormalString(&sendText, &normalText);
+        m_pSendDataTEdit->appendPlainText(normalText);
     }
 }
 

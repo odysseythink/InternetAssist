@@ -159,7 +159,7 @@ CSurfixConfigDlg::~CSurfixConfigDlg()
     }
 }
 
-uint8_t AssiiToHex(char c)
+uint8_t AssiiToHex(uint8_t c)
 {
     uint8_t res = 0;
 
@@ -168,12 +168,12 @@ uint8_t AssiiToHex(char c)
         res = c - '0';
     }
 
-    if((c >= 'A') && (c <= 'E'))
+    if((c >= 'A') && (c <= 'F'))
     {
         res = c - 'A' + 10;
     }
 
-    if((c >= 'a') && (c <= 'e'))
+    if((c >= 'a') && (c <= 'f'))
     {
         res = c - 'a' + 10;
     }
